@@ -47,7 +47,7 @@ include_directories (${OpenCV_INCLUDE_DIRS})
 link_directories(${LIB_FOLDER})
 
 # Create library file from sources.
-add_executable(${TARGET_NAME} ${MAIN_SRC} ${MAIN_HEADERS})
+add_library(${TARGET_NAME} ${MAIN_SRC} ${MAIN_HEADERS})
 
 add_dependencies(${TARGET_NAME} gflags)
 

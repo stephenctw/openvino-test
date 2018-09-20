@@ -772,7 +772,7 @@ struct Load {
     }
 };
 
-int main(int argc, char *argv[]) {
+int sample_entry(int argc, char *argv[]) {
     try {
         /** This sample covers 3 certain topologies and cannot be generalized **/
         std::cout << "InferenceEngine: " << GetInferenceEngineVersion() << std::endl;
@@ -1036,6 +1036,5 @@ int foo()
 {
     int arg1 = 7;
     const char * arg2[7] = {"facial_main", "-i", "cam", "-m", "/opt/intel/computer_vision_sdk_2018.2.319/deployment_tools/intel_models/face-detection-adas-0001/FP32/face-detection-adas-0001.xml", "-d", "GPU"};
-    //return sample_entry(arg1, (char**)arg2);
-    return 0;
+    return sample_entry(arg1, (char**)arg2);
 }
