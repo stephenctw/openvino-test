@@ -13,16 +13,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* 
 WORKDIR /app
 COPY . ./
-ENV INTEL_CVSDK_DIR=/opt/intel/computer_vision_sdk_2018.2.319
-ENV OpenCV_DIR=/opt/intel/computer_vision_sdk_2018.2.319/opencv/share/OpenCV
-ENV gflags_DIR=/opt/intel/computer_vision_sdk_2018.2.319/inference_engine/samples/build/thirdparty/gflags
-ENV InferenceEngine_DIR=/opt/intel/computer_vision_sdk_2018.2.319/deployment_tools/inference_engine/share
-ENV PYTHONPATH=/opt/intel/computer_vision_sdk_2018.2.319/python/python2.7:/opt/intel/computer_vision_sdk_2018.2.319/python/python2.7/ubuntu:/opt/intel/computer_vision_sdk_2018.2.319/deployment_tools/model_optimizer:
-ENV LD_LIBRARY_PATH=/opt/intel/computer_vision_sdk_2018.2.319/opencv/share/OpenCV/3rdparty/lib:/opt/intel/computer_vision_sdk_2018.2.319/opencv/lib:/opt/intel/opencl:/opt/intel/computer_vision_sdk_2018.2.319/deployment_tools/inference_engine/external/cldnn/lib:/opt/intel/computer_vision_sdk_2018.2.319/deployment_tools/inference_engine/external/gna/lib:/opt/intel/computer_vision_sdk_2018.2.319/deployment_tools/inference_engine/external/mkltiny_lnx/lib:/opt/intel/computer_vision_sdk_2018.2.319/deployment_tools/inference_engine/lib/ubuntu_16.04/intel64:/opt/intel/computer_vision_sdk_2018.2.319/deployment_tools/model_optimizer/model_optimizer_caffe/bin:/opt/intel/computer_vision_sdk_2018.2.319/openvx/lib:
-RUN mkdir build
-WORKDIR /app/build
-RUN cmake .. 
-RUN make
+RUN ./build_samples.sh
 
 FROM base
 WORKDIR /app
