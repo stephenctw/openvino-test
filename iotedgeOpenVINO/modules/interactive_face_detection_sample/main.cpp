@@ -772,7 +772,7 @@ struct Load {
     }
 };
 
-int sample_entry(int argc, char *argv[]) {
+int sample_entry(int argc, char *argv[], int * out_label, float * out_confidence, int * out_count) {
     try {
         /** This sample covers 3 certain topologies and cannot be generalized **/
         std::cout << "InferenceEngine: " << GetInferenceEngineVersion() << std::endl;
@@ -938,6 +938,8 @@ int sample_entry(int argc, char *argv[]) {
             }
 
             int i = 0;
+            int * p_label = out_label;
+            float * p_confidence = out_confidence;
             for (auto & result : FaceDetection.results) {
                 cv::Rect rect = result.location;
 
@@ -950,6 +952,10 @@ int sample_entry(int argc, char *argv[]) {
                         std::cout << "Predicted gender, age = " << out.str() << std::endl;
                     }
                 } else {
+                    *p_label = result.label;
+                    *p_confidence = result.confidence;
+                    p_label++;
+                    p_confidence++;
                     out << (result.label < FaceDetection.labels.size() ? FaceDetection.labels[result.label] :
                              std::string("label #") + std::to_string(result.label))
                         << ": " << std::fixed << std::setprecision(3) << result.confidence;
@@ -984,6 +990,7 @@ int sample_entry(int argc, char *argv[]) {
 
                 i++;
             }
+            *out_count = i;
 
             if (-1 != cv::waitKey(1))
                 break;
@@ -1032,9 +1039,9 @@ int sample_entry(int argc, char *argv[]) {
     return 0;
 }
 
-int foo()
+int foo(int * out_label, float * out_confidence, int * out_count)
 {
     int arg1 = 7;
-    const char * arg2[7] = {"facial_main", "-i", "cam", "-m", "/opt/intel/computer_vision_sdk_2018.2.319/deployment_tools/intel_models/face-detection-adas-0001/FP32/face-detection-adas-0001.xml", "-d", "GPU"};
-    return sample_entry(arg1, (char**)arg2);
+    const char * arg2[7] = {"sample_entry", "-i", "cam", "-m", "/opt/intel/computer_vision_sdk_2018.2.319/deployment_tools/intel_models/face-detection-adas-0001/FP32/face-detection-adas-0001.xml", "-d", "GPU"};
+    return sample_entry(arg1, (char**)arg2, out_label, out_confidence, out_count);
 }

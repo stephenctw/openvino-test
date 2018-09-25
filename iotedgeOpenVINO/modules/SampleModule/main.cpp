@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <thread>
 
 //#include "interactive_face_detection.hpp"
 #include "iothub_module_client_ll.h"
@@ -169,18 +170,30 @@ void iothub_module()
     if ((iotHubModuleClientHandle = InitializeConnection()) != NULL && SetupCallbacksForModule(iotHubModuleClientHandle) == 0)
     {
         // The receiver just loops constantly waiting for messages.
-        /*
+        
+        int count = 0;
+        int labels[20];
+        float confidences[20];
+        std::thread t1 (foo, labels, confidences, &count);
         printf("Waiting for incoming messages.\r\n");
         while (true)
         {
+            printf("%d faces detected\n", count);
+            /*
+            for(int i = 0; i<*count; i++)
+            {
+                printf("label: %d with confidence %3f\n", labels[i], confidences[i]);
+            }
+            */
             IoTHubModuleClient_LL_DoWork(iotHubModuleClientHandle);
             ThreadAPI_Sleep(100);
         }
-        */
+        
         //std::thread t1(facial_main, 7, {"facial_main", "-i", "cam", "-m", "/opt/intel/computer_vision_sdk_2018.2.319/deployment_tools/intel_models/face-detection-adas-0001/FP32/face-detection-adas-0001.xml", "-d", "GPU"});
-        foo();
+        //std::thread t1(facial_main, );
+        //foo();
         //Join the thread with the main thread
-        //t1.join();
+        t1.join();
 
     }
 
@@ -189,7 +202,6 @@ void iothub_module()
 
 int main(void)
 {
-    foo();
-    //iothub_module();
+    iothub_module();
     return 0;
 }
