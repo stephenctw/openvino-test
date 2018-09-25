@@ -16,6 +16,6 @@ RUN sudo -E ./install_NEO_OCL_driver.sh
 RUN usermod -a -G video root
 WORKDIR /app
 COPY . ./
-RUN ./build_samples.sh
+RUN sudo -E ./build_samples.sh
 RUN useradd -ms /bin/bash moduleuser
-CMD ["./build/intel64/Release/main"]
+CMD ["./run_sample.sh"]
