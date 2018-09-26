@@ -15,20 +15,19 @@ cmake_minimum_required(VERSION 2.8)
 
 set(TARGET_NAME "main")
 
-find_package(OpenCV)
-if(OpenCV_FOUND)
-    message(STATUS "OPENCV is enabled")
-    message(STATUS "OpenCV_INCLUDE_DIRS=${OpenCV_INCLUDE_DIRS}")
-    message(STATUS "OpenCV_LIBS=${OpenCV_LIBS}")
-else()
-    message(STATUS "OPENCV is disabled or not found, " ${TARGET_NAME} " skiped")
-    return()
-endif()
+macro(compileAsC99)
+  if (CMAKE_VERSION VERSION_LESS "3.1")
+    if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
+      set (CMAKE_C_FLAGS "--std=c99 ${CMAKE_C_FLAGS}")
+      set (CMAKE_CXX_FLAGS "--std=c++11 ${CMAKE_CXX_FLAGS}")
+    endif()
+  else()
+    set (CMAKE_C_STANDARD 99)
+    set (CMAKE_CXX_STANDARD 11)
+  endif()
+endmacro(compileAsC99)
 
-if( BUILD_SAMPLE_NAME AND NOT ${BUILD_SAMPLE_NAME} STREQUAL ${TARGET_NAME} )
-    message(STATUS "SAMPLE ${TARGET_NAME} SKIPPED")
-    return()
-endif()
+compileAsC99()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DUSE_EDGE_MODULES")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DUSE_EDGE_MODULES")
@@ -37,34 +36,19 @@ set(AZUREIOT_INC_FOLDER "/usr/include/azureiot" "/usr/include/azureiot/inc")
 
 include_directories(${AZUREIOT_INC_FOLDER})
 
-file (GLOB MAIN_SRC
-        ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
-        )
+set(main_c_files
+    ./main.cpp
+)
 
-file (GLOB MAIN_HEADERS
-        ${CMAKE_CURRENT_SOURCE_DIR}/*.h
-        )
-
-# Create named folders for the sources within the .vcproj
-# Empty name lists them directly under the .vcproj
-source_group("src" FILES ${MAIN_SRC})
-source_group("include" FILES ${MAIN_HEADERS})
-
-include_directories (${OpenCV_INCLUDE_DIRS})
-link_directories(${LIB_FOLDER})
+add_executable(${TARGET_NAME} ${main_c_files})
 
 # Create library file from sources.
 add_executable(${TARGET_NAME} ${MAIN_SRC} ${MAIN_HEADERS})
 
 add_dependencies(${TARGET_NAME} interactive_face_detection_sample)
 
-set_target_properties(${TARGET_NAME} PROPERTIES "CMAKE_CXX_FLAGS" "${CMAKE_CXX_FLAGS} -fPIE"
-COMPILE_PDB_NAME ${TARGET_NAME})
-
-
 target_link_libraries(${TARGET_NAME} 
     interactive_face_detection_sample
-    pthread
     iothub_client_mqtt_transport
     iothub_client
     parson
@@ -78,8 +62,5 @@ target_link_libraries(${TARGET_NAME}
     prov_auth_client
     hsm_security_client
     uhttp
-    uuid)
-
-if(UNIX)
-    target_link_libraries( ${TARGET_NAME} ${LIB_DL} pthread ${OpenCV_LIBRARIES})
-endif()
+    uuid
+)

@@ -178,7 +178,8 @@ void iothub_module()
         printf("Waiting for incoming messages.\r\n");
         while (true)
         {
-            printf("%d faces detected\n", count);
+            if(count>0)
+                printf("%d faces detected\n", count);
             /*
             for(int i = 0; i<*count; i++)
             {
@@ -186,7 +187,7 @@ void iothub_module()
             }
             */
             IoTHubModuleClient_LL_DoWork(iotHubModuleClientHandle);
-            ThreadAPI_Sleep(100);
+            ThreadAPI_Sleep(1000);
         }
         
         //std::thread t1(facial_main, 7, {"facial_main", "-i", "cam", "-m", "/opt/intel/computer_vision_sdk_2018.2.319/deployment_tools/intel_models/face-detection-adas-0001/FP32/face-detection-adas-0001.xml", "-d", "GPU"});
