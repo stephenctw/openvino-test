@@ -42,12 +42,9 @@ set(main_c_files
 
 add_executable(${TARGET_NAME} ${main_c_files})
 
-# Create library file from sources.
-add_executable(${TARGET_NAME} ${MAIN_SRC} ${MAIN_HEADERS})
-
 add_dependencies(${TARGET_NAME} interactive_face_detection_sample)
 
-target_link_libraries(${TARGET_NAME} 
+target_link_libraries(${TARGET_NAME}
     interactive_face_detection_sample
     iothub_client_mqtt_transport
     iothub_client
