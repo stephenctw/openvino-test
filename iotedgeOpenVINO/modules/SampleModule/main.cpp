@@ -176,23 +176,36 @@ void iothub_module()
         std::thread t1 (foo, labels, confidences, &count);
         printf("Waiting for incoming messages.\r\n");
         while (true)
-        {
-            if(count>0)
-                printf("%d faces detected\n", count);
-            /*
-            for(int i = 0; i<*count; i++)
-            {
-                printf("label: %d with confidence %3f\n", labels[i], confidences[i]);
-            }
-            */
+        {            
             IoTHubModuleClient_LL_DoWork(iotHubModuleClientHandle);
-            ThreadAPI_Sleep(1000);
+
+            IOTHUBMESSAGE_DISPOSITION_RESULT result;
+            IOTHUB_CLIENT_RESULT clientResult;
+
+            // send notification to iothub if detect any faces
+            if(count>0)
+            {
+                std::string message = std::to_string(count) + " faces detected!";
+                IOTHUB_MESSAGE_HANDLE message_handle = IoTHubMessage_CreateFromByteArray((const unsigned char*)message.data(), message.size());
+                MESSAGE_INSTANCE *messageInstance = CreateMessageInstance(message_handle);
+                if (NULL != messageInstance)
+                {
+                    clientResult = IoTHubModuleClient_LL_SendEventToOutputAsync(iotHubModuleClientHandle, messageInstance->messageHandle, "output1", SendConfirmationCallback, (void *)messageInstance);
+                    if (clientResult != IOTHUB_CLIENT_OK)
+                    {
+                        IoTHubMessage_Destroy(messageInstance->messageHandle);
+                        free(messageInstance);
+                        result = IOTHUBMESSAGE_ABANDONED;
+                    }
+                    else
+                    {
+                        result = IOTHUBMESSAGE_ACCEPTED;
+                    }
+                }
+            }
+
+            ThreadAPI_Sleep(5000);
         }
-        
-        //std::thread t1(facial_main, 7, {"facial_main", "-i", "cam", "-m", "/opt/intel/computer_vision_sdk_2018.2.319/deployment_tools/intel_models/face-detection-adas-0001/FP32/face-detection-adas-0001.xml", "-d", "GPU"});
-        //std::thread t1(facial_main, );
-        //foo();
-        //Join the thread with the main thread
         t1.join();
 
     }
