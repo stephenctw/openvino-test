@@ -18,4 +18,4 @@ WORKDIR /app
 COPY . ./
 RUN sudo -E ./build_samples.sh
 RUN useradd -ms /bin/bash moduleuser
-CMD ["./run_sample.sh"]
+CMD ["./testC"]
