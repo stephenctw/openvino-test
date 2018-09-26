@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <thread>
 
-//#include "interactive_face_detection.hpp"
 #include "iothub_module_client_ll.h"
 #include "iothub_client_options.h"
 #include "iothub_message.h"

@@ -7,7 +7,6 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 FROM base AS build-env
-SHELL ["/bin/bash", "-c"]
 RUN apt-get update && \
     apt-get install -y --no-install-recommends cmake gcc g++ make libgflags-dev && \
     rm -rf /var/lib/apt/lists/* 
@@ -18,4 +17,4 @@ WORKDIR /app
 COPY . ./
 RUN sudo -E ./build_samples.sh
 RUN useradd -ms /bin/bash moduleuser
-CMD ["./build/intel64/Release/testC"]
+CMD ["/bin/bash", "-c", "source /opt/intel/computer_vision_sdk_2018.2.319/bin/setupvars.sh && exec ./build/intel64/Release/main"]
