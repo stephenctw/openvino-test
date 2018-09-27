@@ -218,7 +218,7 @@ void iothub_module()
                     std::string message = std::string("{") +
                     "\"faces\":" + "\"" + std::to_string(tmp_result.count) + "\"," +
                     "\"male\":" + "\"" + std::to_string(tmp_result.maleCount) + "\"," +
-                    "\"female\":" + "\"" + std::to_string(tmp_result.femaleCount) + "\"" +
+                    "\"female\":" + "\"" + std::to_string(tmp_result.femaleCount) + "\"," +
                     "\"timestamp\":" + "\"" + timetemp + "\"" +
                     "}";
                     IOTHUB_MESSAGE_HANDLE message_handle = IoTHubMessage_CreateFromByteArray((const unsigned char*)message.data(), message.size());
