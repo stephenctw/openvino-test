@@ -170,10 +170,8 @@ void iothub_module()
     {
         // The receiver just loops constantly waiting for messages.
         
-        int count = 0;
-        int labels[20];
-        float confidences[20];
-        std::thread t1 (foo, labels, confidences, &count);
+        std::atomic<DetectionResult> out_result(20);
+        std::thread t1 (foo, &out_result);
         printf("Waiting for incoming messages.\r\n");
         while (true)
         {            
@@ -183,9 +181,10 @@ void iothub_module()
             IOTHUB_CLIENT_RESULT clientResult;
 
             // send notification to iothub if detect any faces
-            if(count>0)
+            DetectionResult tmp_result = out_result;
+            if(tmp_result.count > 0)
             {
-                std::string message = std::to_string(count) + " faces detected!";
+                std::string message = std::to_string(tmp_result.count) + " faces detected!";
                 IOTHUB_MESSAGE_HANDLE message_handle = IoTHubMessage_CreateFromByteArray((const unsigned char*)message.data(), message.size());
                 MESSAGE_INSTANCE *messageInstance = CreateMessageInstance(message_handle);
                 if (NULL != messageInstance)

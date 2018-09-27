@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.11)
 
 set(TARGET_NAME "main")
 
@@ -33,6 +33,7 @@ add_dependencies(${TARGET_NAME} interactive_face_detection_sample)
 
 target_link_libraries(${TARGET_NAME}
     interactive_face_detection_sample
+    atomic
     iothub_client_mqtt_transport
     iothub_client
     parson

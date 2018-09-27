@@ -132,7 +132,6 @@ endif()
 
 add_subdirectory(modules/interactive_face_detection_sample)
 add_subdirectory(modules/SampleModule)
-add_subdirectory(modules/testC)
 
 if (NEED_EXTENSIONS)
     add_subdirectory(modules/extension)

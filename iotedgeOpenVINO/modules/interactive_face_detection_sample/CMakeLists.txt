@@ -55,7 +55,7 @@ set_target_properties(${TARGET_NAME} PROPERTIES "CMAKE_CXX_FLAGS" "${CMAKE_CXX_F
 COMPILE_PDB_NAME ${TARGET_NAME})
 
 
-target_link_libraries(${TARGET_NAME} format_reader cpu_extension ${InferenceEngine_LIBRARIES} gflags)
+target_link_libraries(${TARGET_NAME} format_reader cpu_extension ${InferenceEngine_LIBRARIES} gflags atomic)
 
 if(UNIX)
     target_link_libraries( ${TARGET_NAME} ${LIB_DL} pthread ${OpenCV_LIBRARIES})
