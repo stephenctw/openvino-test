@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <thread>
+#include <time.h>
 
 #include "iothub_module_client_ll.h"
 #include "iothub_client_options.h"
@@ -160,6 +161,32 @@ static int SetupCallbacksForModule(IOTHUB_MODULE_CLIENT_LL_HANDLE iotHubModuleCl
     return ret;
 }
 
+static int get_timestamp(char* timetemp)
+{
+    /*getting the time*/
+    time_t temp = time(NULL);
+    if (temp == (time_t)-1)
+    {
+        return -1;
+    }
+    else
+    {
+        struct tm* t = localtime(&temp);
+        if (t == NULL)
+        {
+            return -1;
+        }
+        else
+        {
+            if (strftime(timetemp, 20, "%F %T", t) == 0)
+            {
+                return -1;
+            }
+        }
+    }
+    return 0;
+}
+
 void iothub_module()
 {
     IOTHUB_MODULE_CLIENT_LL_HANDLE iotHubModuleClientHandle;
@@ -184,25 +211,31 @@ void iothub_module()
             DetectionResult tmp_result = out_result;
             if(tmp_result.count > 0)
             {
-                std::string message = std::string("{") +
-                "\"faces\":" + "\"" + std::to_string(tmp_result.count) + "\"," +
-                "\"male\":" + "\"" + std::to_string(tmp_result.maleCount) + "\"," +
-                "\"female\":" + "\"" + std::to_string(tmp_result.femaleCount) + "\"" +
-                "}";
-                IOTHUB_MESSAGE_HANDLE message_handle = IoTHubMessage_CreateFromByteArray((const unsigned char*)message.data(), message.size());
-                MESSAGE_INSTANCE *messageInstance = CreateMessageInstance(message_handle);
-                if (NULL != messageInstance)
+                char timetemp[20] = { 0 };
+
+                if (get_timestamp(timetemp) == 0)
                 {
-                    clientResult = IoTHubModuleClient_LL_SendEventToOutputAsync(iotHubModuleClientHandle, messageInstance->messageHandle, "output1", SendConfirmationCallback, (void *)messageInstance);
-                    if (clientResult != IOTHUB_CLIENT_OK)
+                    std::string message = std::string("{") +
+                    "\"faces\":" + "\"" + std::to_string(tmp_result.count) + "\"," +
+                    "\"male\":" + "\"" + std::to_string(tmp_result.maleCount) + "\"," +
+                    "\"female\":" + "\"" + std::to_string(tmp_result.femaleCount) + "\"" +
+                    "\"timestamp\":" + "\"" + timetemp + "\"" +
+                    "}";
+                    IOTHUB_MESSAGE_HANDLE message_handle = IoTHubMessage_CreateFromByteArray((const unsigned char*)message.data(), message.size());
+                    MESSAGE_INSTANCE *messageInstance = CreateMessageInstance(message_handle);
+                    if (NULL != messageInstance)
                     {
-                        IoTHubMessage_Destroy(messageInstance->messageHandle);
-                        free(messageInstance);
-                        result = IOTHUBMESSAGE_ABANDONED;
-                    }
-                    else
-                    {
-                        result = IOTHUBMESSAGE_ACCEPTED;
+                        clientResult = IoTHubModuleClient_LL_SendEventToOutputAsync(iotHubModuleClientHandle, messageInstance->messageHandle, "output1", SendConfirmationCallback, (void *)messageInstance);
+                        if (clientResult != IOTHUB_CLIENT_OK)
+                        {
+                            IoTHubMessage_Destroy(messageInstance->messageHandle);
+                            free(messageInstance);
+                            result = IOTHUBMESSAGE_ABANDONED;
+                        }
+                        else
+                        {
+                            result = IOTHUBMESSAGE_ACCEPTED;
+                        }
                     }
                 }
             }
