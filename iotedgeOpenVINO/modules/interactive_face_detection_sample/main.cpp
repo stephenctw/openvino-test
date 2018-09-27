@@ -979,9 +979,25 @@ int sample_entry(int argc, char *argv[], std::atomic<DetectionResult>* out_resul
                     HeadPose.drawAxes(frame, center, HeadPose[i], 50);
                 }
 
-                auto genderColor = (AgeGender.enabled() && (i < AgeGender.maxBatch)) ?
-                              ((AgeGender[i].maleProb < 0.5) ? cv::Scalar(147, 20, 255) : cv::Scalar(255, 0, 0)) :
-                              cv::Scalar(100, 100, 100);
+                cv::Scalar genderColor;
+
+                if(AgeGender.enabled() && (i < AgeGender.maxBatch))
+                {
+                    if(AgeGender[i].maleProb < 0.5)
+                    {
+                        genderColor = cv::Scalar(147, 20, 255);
+                        tmp_result.femaleCount++;
+                    }
+                    else
+                    {
+                        genderColor = cv::Scalar(255, 0, 0);
+                        tmp_result.maleCount++;
+                    }
+                }
+                else
+                {
+                    genderColor = cv::Scalar(100, 100, 100);
+                }
 
                 cv::rectangle(frame, result.location, genderColor, 1);
 
@@ -1039,7 +1055,17 @@ int sample_entry(int argc, char *argv[], std::atomic<DetectionResult>* out_resul
 
 int foo(std::atomic<DetectionResult>* result)
 {
-    int arg1 = 7;
-    const char * arg2[7] = {"sample_entry", "-i", "cam", "-m", "/opt/intel/computer_vision_sdk_2018.2.319/deployment_tools/intel_models/face-detection-adas-0001/FP32/face-detection-adas-0001.xml", "-d", "GPU"};
+    int arg1 = 9;
+    const char * arg2[9] = {
+    "sample_entry", 
+    "-i",
+    "cam",
+    "-m",
+    "/opt/intel/computer_vision_sdk_2018.2.319/deployment_tools/intel_models/face-detection-adas-0001/FP32/face-detection-adas-0001.xml", 
+    "-m_ag",
+    "/opt/intel/computer_vision_sdk_2018.2.319/deployment_tools/intel_models/age-gender-recognition-retail-0013/FP32/age-gender-recognition-retail-0013.xml",
+    "-d",
+    "GPU"
+    };
     return sample_entry(arg1, (char**)arg2, result);
 }

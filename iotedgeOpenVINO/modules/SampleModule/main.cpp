@@ -184,7 +184,11 @@ void iothub_module()
             DetectionResult tmp_result = out_result;
             if(tmp_result.count > 0)
             {
-                std::string message = std::to_string(tmp_result.count) + " faces detected!";
+                std::string message = std::string("{") +
+                "\"faces\":" + "\"" + std::to_string(tmp_result.count) + "\"," +
+                "\"male\":" + "\"" + std::to_string(tmp_result.maleCount) + "\"," +
+                "\"female\":" + "\"" + std::to_string(tmp_result.femaleCount) + "\"" +
+                "}";
                 IOTHUB_MESSAGE_HANDLE message_handle = IoTHubMessage_CreateFromByteArray((const unsigned char*)message.data(), message.size());
                 MESSAGE_INSTANCE *messageInstance = CreateMessageInstance(message_handle);
                 if (NULL != messageInstance)
