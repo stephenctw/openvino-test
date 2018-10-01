@@ -6,14 +6,15 @@ Using this module, developers can build Azure IoT Edge solutions with Intel Open
 ### Platform Compatibility ###
 Azure IoT Edge is designed to be used with a broad range of operating system platforms. OpenVino module has been tested on the following platforms:
 
-- UP2 board with Linux x64 operating system
+- UP2 board with ubuntu 16.04 operating system
 
 ### Device Setup ###
 - [Linux](https://docs.microsoft.com/en-us/azure/iot-edge/quickstart-linux)
 
 ## Build Environment Setup ##
 OpenVino module is a C++ application, which is developed and built based on the guidelines in Azure IoT Edge document.
-Please follow [this link](https://docs.microsoft.com/en-us/azure/iot-edge/tutorial-c-module) to setup the build environment. 
+Please follow [this link](https://docs.microsoft.com/en-us/azure/iot-edge/tutorial-c-module) to setup the build environment.
+Also check Intel website for more about [openvino](https://software.intel.com/en-us/openvino-toolkit) toolkit.
 
 Basic requirement:
 - Docker CE
@@ -23,6 +24,10 @@ Basic requirement:
 ### Run as an IoT Edge module ###
 Please follow the [link](https://docs.microsoft.com/en-us/azure/iot-edge/tutorial-c-module) to deploy the module as an IoT Edge module.
 
+If edge device is connected to a monitor, run xhost command to enable display from containers.
+```shell
+xhost +
+```
 
 In the **Container Create Option section**, enter the following.
 ```json
@@ -59,8 +64,8 @@ In the **Container Create Option section**, enter the following.
 ### See result on Device Explorer ###
 
 ```log
-9/26/2018 3:25:59 PM> Device: [OpenVinoDev01], Data:[1 faces detected!]
-9/26/2018 3:26:09 PM> Device: [OpenVinoDev01], Data:[1 faces detected!]
+10/1/2018 4:00:37 PM> Device: [OpenVinoDev01], Data:[{"faces":"1","male":"1","female":"0","timestamp":"2018-10-01 08:00:32"}]
+10/1/2018 4:00:42 PM> Device: [OpenVinoDev01], Data:[{"faces":"1","male":"1","female":"0","timestamp":"2018-10-01 08:00:37"}]
 ```
 
 # Contributing
